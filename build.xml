@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<project name="topocodocov" default="jar" basedir=".">
+
+  <property name="version" value="0.1"/>
+  <property name="buildnumber" value="1"/>
+  <property name="junit.output.dir" value="junit"/>
+  
+  <path id="JUnit 4.libraryclasspath">
+    <pathelement location="lib/junit.jar"/>
+    <pathelement location="lib/org.hamcrest.core_1.3.0.v201303031735.jar"/>
+  </path>
+	
+  <path id="m4rjni.classpath">
+    <pathelement location="bin"/>
+    <path refid="JUnit 4.libraryclasspath"/>
+  </path>
+	
+  <tstamp>
+    <format property="this_year" pattern="yyyy"/>
+  </tstamp>
+
+  <property name="copyright" value="Copyright &#xa9; ${this_year} Brenton Walker"/>
+  
+  <target name="build" description="Compile the classes">
+    <mkdir dir="bin"/>
+  	<javac srcdir="src/" destdir="bin" deprecation="on" includeantruntime="false" />
+  </target>
+  
+  <target name="jar" depends="build">
+    <delete file="m4rjni.jar"/>
+    <delete file="MANIFEST.MF"/>
+    <manifest file="MANIFEST.MF">
+      <attribute name="Manifest-Version" value="1.0"/>
+      <attribute name="Class-Path" value="bin"/>
+    </manifest>
+    <jar destfile="tocodocov.jar" basedir="bin" includes="topocodocov/*.class" manifest="MANIFEST.MF"/>
+  </target>
+  
+  <target name="doc">
+    <exec executable="javadoc">
+        <arg line="-d doc" />
+        <arg line="-sourcepath src" />
+        <arg line="-windowtitle topocodocov" />
+        <arg line="topocodocov" />
+    </exec>
+  </target>
+
+  <target name="clean">
+    <delete dir="./bin"/>
+    <delete dir="./junit"/>
+    <delete file="./topocodocov.jar"/>
+  </target>
+
+</project>

@@ -1,0 +1,6 @@
+#!/bin/sh
+
+CPATH="bin:lib/javaplex-4.1.0.jar:lib/primitive-lib.jar:lib/trove-2.1.0.jar:lib/plex-viewer-1.0.0.jar:lib/m4rjni.jar:lib/ext/gluegen-rt.jar:lib/ext/jogl-all.jar"
+LPATH="lib:lib/ext/amd64/"
+
+LD_LIBRARY_PATH=$LPATH java -Djava.library.path=$LPATH -Djogamp.gluegen.UseTempJarCache=false -cp $CPATH $@
