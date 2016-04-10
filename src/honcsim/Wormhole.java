@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package topocodocov;
+package honcsim;
 /*
  * build and study the wormhole complex
  */

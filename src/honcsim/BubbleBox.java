@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package topocodocov;
+package honcsim;
 /*
  * The bubble box example
  */

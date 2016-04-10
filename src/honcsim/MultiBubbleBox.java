@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package topocodocov;
+package honcsim;
 /*
  * Experiment with arrangements of lots of bubbleboxes
  * 

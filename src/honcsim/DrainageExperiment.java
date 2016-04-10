@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package topocodocov;
+package honcsim;
 /*
  * 
  * A base class to handle some common functionality of coverage complex experiments

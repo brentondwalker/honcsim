@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package topocodocov;
+package honcsim;
 /*
  * The example of three connected bubble boxes where RC(v) has
  * a hole for every possible v in V

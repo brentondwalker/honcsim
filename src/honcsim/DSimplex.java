@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package topocodocov;
+package honcsim;
 /*
  * Class representing a simplex of DPoint.
  * Should provide some utilities for keeping track of the common neighbors and vector spaces spanned.

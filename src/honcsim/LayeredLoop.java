@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package topocodocov;
+package honcsim;
 /*
  * example of a layered loop. A case where we have a contractible boundary
  * But H1(RC(V)) != 0

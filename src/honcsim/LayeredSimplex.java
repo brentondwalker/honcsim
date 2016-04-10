@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package topocodocov;
+package honcsim;
 /*
  * The example with a 2-simplex overlapping a fully-covering 2-chain
  * where only the vertices connect to the cover

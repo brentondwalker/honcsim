@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package topocodocov;
+package honcsim;
 /*
  * Kind of like CoverageGrid, but this time have the points inside the box
  * be randomly distributed.

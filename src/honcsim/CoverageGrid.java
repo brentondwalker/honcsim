@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package topocodocov;
+package honcsim;
 /*
  * Entry point for a class modeling a grid layout of DPoints
  * Parameters TBD

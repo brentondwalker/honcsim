@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package topocodocov;
+package honcsim;
 /*
  * An example resolving all the (interior) vertices and no higher dim simplices
  * 

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package topocodocov;
+package honcsim;
 /*
  * counterexample to the general existence of liftings in the coverage complex
  */
