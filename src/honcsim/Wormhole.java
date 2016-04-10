@@ -121,7 +121,7 @@ public class Wormhole extends CoverageExperiment {
 		Wormhole wrm = new Wormhole();
 	    
 	    //Vector<ExplicitSimplexStream> cycleStreams = g.computeHomology();
-	    wrm.computeHomology();
+	    //wrm.computeHomology();
 	    
 	    wrm.buildCoverageRipsComplex(wrm.V);
 	    //Vector<ExplicitSimplexStream> coverageRipsCycleStreams = wrm.computePersistentHomology();

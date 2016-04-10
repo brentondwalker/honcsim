@@ -485,7 +485,7 @@ public class CoverageExperiment {
 		stream.finalizeStream();
 
 		AbstractPersistenceBasisAlgorithm<Simplex,IntSparseFormalSum<Simplex>> persistence = new IntAbsoluteHomology<Simplex>(ModularIntField.getInstance(2), SimplexComparator.getInstance(), 0, 2);
-		System.out.println("Got persistence object...");
+		//System.out.println("Got persistence object...");
 
 		// compute and print the intervals
 		BarcodeCollection<Double> intervals = persistence.computeIntervals(stream);
@@ -565,7 +565,7 @@ public class CoverageExperiment {
 		stream.finalizeStream();
 
 		AbstractPersistenceBasisAlgorithm<Simplex,IntSparseFormalSum<Simplex>> persistence = new IntAbsoluteHomology<Simplex>(ModularIntField.getInstance(2), SimplexComparator.getInstance(), 0, 2);
-		System.out.println("Got persistence object...");
+		//System.out.println("Got persistence object...");
 
 		// compute and print the intervals
 		BarcodeCollection<Double> intervals = persistence.computeIntervals(stream);
@@ -615,7 +615,12 @@ public class CoverageExperiment {
 	 * 
 	 */
 	public void drawComplex() {
-		System.out.println("drawComplex()");
+		//System.out.println("drawComplex()");
+		System.out.println("page-up / page-down to zoom");
+		System.out.println("arrows rotate");
+		System.out.println("1 - show/hide Rips complex");
+		System.out.println("2 - show/hide coverage complex");
+		System.out.println("3 - show/hide homology generators");
 		
 		// first put the points location data into an array of double
 		domainPoints = new double[points.size()][];
