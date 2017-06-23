@@ -23,6 +23,7 @@ package honcsim;
  */
 
 
+import java.util.Random;
 import java.util.Vector;
 
 public class FencedCoverageSquare extends CoverageExperiment {
@@ -35,6 +36,7 @@ public class FencedCoverageSquare extends CoverageExperiment {
 	double gridSpacing = 0.0;
 	int numPoints = 0;
 	int inventorySize = 0;
+	Random rng = null;
 
 	// add a parameter to keep the 'uniformly random' points from being too close together
 	double minSpacing = this.radius/3.0;
@@ -54,6 +56,7 @@ public class FencedCoverageSquare extends CoverageExperiment {
 		this.gridSpacing = spacing;
 		this.numPoints = npoints;
 		this.inventorySize = inventorySize;
+		this.rng = new Random(5);
 		
 		// allocate the grid of DPoints
 		points = new Vector<DPoint>(2*gridHeight + 2*gridWidth - 2 + numPoints);
@@ -86,8 +89,8 @@ public class FencedCoverageSquare extends CoverageExperiment {
 			// also this is REALLY inefficient, but this part not really worth optimizing
 			double xx = 0.0;  double yy = 0.0;
 			for (int t=0; t<100; t++) {
-				xx = origin[0]+Math.random()*width;
-				yy = origin[1]+Math.random()*height;
+				xx = origin[0]+rng.nextDouble()*width;
+				yy = origin[1]+rng.nextDouble()*height;
 				boolean tooClose = false;
 				for (DPoint p : points) {
 					if ((xx-p.x)*(xx-p.x)+(yy-p.y)*(yy-p.y) < r2) {
@@ -151,8 +154,8 @@ public class FencedCoverageSquare extends CoverageExperiment {
 		FencedCoverageSquare g = new FencedCoverageSquare(gridWidth, gridHeight, gridSpacing, vsDim, numPoints,  inventorySize);
 
 		g.buildRipsComplex();
-		g.buildCoverageComplex(g.V);
-		g.buildCoverageRipsComplex(g.V);		
+		g.buildCoverageComplex(g.V, true);
+		g.buildCoverageRipsComplex(g.V, true);		
 	    //g.computeHomology();
 		g.computePersistentHomology();
 	    g.drawComplex();
