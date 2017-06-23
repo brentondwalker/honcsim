@@ -77,9 +77,9 @@ public class CoverageExperiment {
         this.radius = r;
 
         // seed the m4ri random number generator
-        //Random generator = new Random();
-        //Mzd.srandom(generator.nextInt());
-        Mzd.srandom(1);
+        Random generator = new Random();
+        Mzd.srandom(generator.nextInt());
+        //Mzd.srandom(1);
         
         // construct the identity matrix for the full vector space V
         this.V = new Mzd(vsDimension, vsDimension);

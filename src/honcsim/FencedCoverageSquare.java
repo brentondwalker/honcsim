@@ -56,7 +56,7 @@ public class FencedCoverageSquare extends CoverageExperiment {
 		this.gridSpacing = spacing;
 		this.numPoints = npoints;
 		this.inventorySize = inventorySize;
-		this.rng = new Random(5);
+		this.rng = new Random();
 		
 		// allocate the grid of DPoints
 		points = new Vector<DPoint>(2*gridHeight + 2*gridWidth - 2 + numPoints);
