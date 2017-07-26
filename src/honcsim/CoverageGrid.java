@@ -31,7 +31,7 @@ package honcsim;
  */
 
 import java.util.*;
-
+import m4rjni.Mzd;
 import edu.stanford.math.plex4.api.Plex4;
 import edu.stanford.math.plex4.homology.barcodes.*;
 import edu.stanford.math.plex4.homology.chain_basis.*;
@@ -41,10 +41,13 @@ import edu.stanford.math.plex4.streams.impl.*;
 import edu.stanford.math.primitivelib.autogen.formal_sum.*;
 import edu.stanford.math.primitivelib.algebraic.impl.*;
 import edu.stanford.math.plex_viewer.*;
+import edu.stanford.math.plex4.homology.chain_basis.Simplex;
+import edu.stanford.math.plex4.homology.chain_basis.SimplexComparator;
 
 
 public class CoverageGrid extends CoverageExperiment {
-
+	
+ 
 	/*
 	 * class data
 	 */
@@ -87,15 +90,15 @@ public class CoverageGrid extends CoverageExperiment {
 
 		for (int j=0; j<height; j++) {
 		    for (int i=0; i<width; i++) {
-			// exclude interior points with some probability
-			// just so we can get a more interesting Rips complex.
-			if (i==0 || j==0 || i==(width-1) || j==(height-1) || (Math.random() >= missingPointProbability)) {
-			    pGrid[i][j] = new DPoint(j*spacing, i*spacing, vsDimension);
-			    points.add(pGrid[i][j]);
-			} else {
-			    System.out.println("Excluding point "+i+","+j);
-			    pGrid[i][j] = null;
-			}
+				// exclude interior points with some probability
+				// just so we can get a more interesting Rips complex.
+				if (i==0 || j==0 || i==(width-1) || j==(height-1) || (Math.random() >= missingPointProbability)) {
+				    pGrid[i][j] = new DPoint(j*spacing, i*spacing, vsDimension);
+				    points.add(pGrid[i][j]);
+				} else {
+				    System.out.println("Excluding point "+i+","+j);
+				    pGrid[i][j] = null;
+				}
 		    }
 		}
 		
@@ -114,6 +117,7 @@ public class CoverageGrid extends CoverageExperiment {
 		for (int i=0; i<points.size(); i++) {
 			for (int j=0; j<inventorySize; j++) {
 				points.get(i).addRandomInventoryVector();
+			
 			}
 		}
 
@@ -140,9 +144,9 @@ public class CoverageGrid extends CoverageExperiment {
 		}
 		for (int i=1; i<(gridHeight-1); i++) {
 			pGrid[0][i].addInventoryVectors(this.basis);
-			//System.out.println("full basis on point "+pGrid[0][i].index);
+			System.out.println("full basis on point "+pGrid[0][i].index);
 			pGrid[gridWidth-1][i].addInventoryVectors(this.basis);
-			//System.out.println("full basis on point "+pGrid[gridWidth-1][i].index);
+			System.out.println("full basis on point "+pGrid[gridWidth-1][i].index);
 		}
 	}
 
@@ -165,19 +169,8 @@ public class CoverageGrid extends CoverageExperiment {
 		int vsDim = Integer.parseInt(args[4]);
 		int inventorySize = Integer.parseInt(args[5]);
 		
-		CoverageGrid g = new CoverageGrid(gridWidth, gridHeight, gridSpacing, exclusionProb, vsDim, inventorySize);
-	    
-	    //Vector<ExplicitSimplexStream> cycleStreams = g.computeHomology();
-	    //g.computeHomology();
+		myCoverageGrid g = new myCoverageGrid(gridWidth, gridHeight, gridSpacing, exclusionProb, vsDim, inventorySize);
 	    g.computePersistentHomology();
-		
-	    //Vector<ExplicitSimplexStream> coverageRipsCycleStreams = g.computePersistentHomology();
-	    
-	    // view the complexes
-	    //for (ExplicitSimplexStream str : cycleStreams) {
-	    //	g.drawFilteredComplex(str);
-	    //}
-	    g.drawComplex();
+	    g.reComputeCoverageComplex();
 	}
-	
 }

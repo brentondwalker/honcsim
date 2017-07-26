@@ -366,14 +366,14 @@ public class DrainageExperiment {
 					HashSet<DPoint> commonNbrs = new HashSet<DPoint>(p1.nbrs);
 					commonNbrs.retainAll(p2.nbrs);
 					commonNbrs.retainAll(p3.nbrs);
-					//if (commonNbrs.size() == 0) {
+					if (commonNbrs.size() == 0) {
 						DPoint[] verts = { p1 , p2 , p3 };
 						DSimplex ds = new DSimplex(Arrays.asList(verts));
 						this.maximalSimplices.addSimplex(ds);
 						p1.ripsCofaces.add(ds);
 						p2.ripsCofaces.add(ds);
 						p3.ripsCofaces.add(ds);
-					//}
+					}
 				}
 			}
 		}

@@ -176,15 +176,15 @@ public class DSimplex {
 	 * this could be optimized a little by adding the vectors more than one at a time,
 	 * but we also want to keep this matrix square.... ah well
 	 */
-	private void computeReducedBasis() {
+	public void computeReducedBasis() {
 		if (reducedBasis != null) {
 			reducedBasis.destroy();
 		}
-		reducedBasis = new Mzd(DrainageExperiment.vsDimension,DrainageExperiment.vsDimension);
+		reducedBasis = new Mzd(CoverageExperiment.vsDimension,CoverageExperiment.vsDimension);
 		for (DPoint p : neighbors) {
 			for (Mzd v : p.M) {
 				// only try adding if we aren't already at full rank
-				if (rank<DrainageExperiment.vsDimension) {
+				if (rank<CoverageExperiment.vsDimension) {
 					Mzd.copyRow(reducedBasis, rank, v, 0);
 					rank = reducedBasis.echelonize(false);
 				}
@@ -313,5 +313,7 @@ public class DSimplex {
 		s += "]";
 		return s;
 	}
+	
+	
 	
 }
