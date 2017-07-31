@@ -61,7 +61,7 @@ public class DPoint {
 	// M is the inventory of vectors
 	Vector<Mzd> M = null;
 	// reducedBasis is a square reduced matrix representing the vector
-	//space spanned by the vectors in M
+	// space spanned by the vectors in M
 	Mzd reducedBasis = null;
 	// the current rank of the reduced basis
 	int rank = 0;
@@ -205,6 +205,19 @@ public class DPoint {
 			this.rank = reducedBasis.echelonize(false);
 		}
 		//System.out.println("\t...done.");
+	}
+	
+	
+	/**
+	 * This method allocates Mzd objects, so we need to explicitly destroy them.
+	 */
+	public void destroy() {
+	    for (Mzd v : M) {
+	        v.destroy();
+	    }
+	    M.clear();
+	    reducedBasis.destroy();
+	    reducedBasis = null;
 	}
 	
 	
