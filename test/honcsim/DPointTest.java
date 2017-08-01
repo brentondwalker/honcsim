@@ -1,13 +1,7 @@
 package honcsim;
 
-import honcsim.DPoint;
 import m4rjni.Mzd;
-
 import static org.junit.Assert.*;
-
-import java.util.Vector;
-
-import static org.hamcrest.CoreMatchers.*;
 import org.junit.Test;
 
 

@@ -13,11 +13,11 @@
 
   <path id="m4rjni.classpath">
     <pathelement location="lib/m4rjni.jar"/>
-    <path refid="JUnit 4.libraryclasspath"/>
   </path>
 	
   <path id="honcsim.classpath">
     <pathelement location="bin"/>
+  	<path refid="m4rjni.classpath"/>
     <path refid="JUnit 4.libraryclasspath"/>
   </path>
 	
