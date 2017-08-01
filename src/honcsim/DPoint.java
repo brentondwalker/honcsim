@@ -86,7 +86,63 @@ public class DPoint {
 		M = new Vector<Mzd>();
 		reducedBasis = new Mzd(vsDimension,vsDimension);
 	}
+	
 
+	/**
+	 * Add a DPoint to the neighbor list for this node.
+	 * This maintains the nbrsUp set also.
+	 * This also updates the neighbor lists of the DPoint passed in.
+	 * 
+	 * Returns true if the added DPoint is a new addition to
+	 * the neighbor set, false otherwise.
+	 * 
+	 * @param p
+	 * @return
+	 */
+	public boolean addNeighbor(DPoint p) {
+	    int old_size = nbrs.size();
+	    nbrs.add(p);
+	    p.nbrs.add(this);
+	    if (p.index > this.index) {
+	        nbrsUp.add(p);
+	    } else if (p.index < this.index) {
+	        p.nbrsUp.add(this);
+	    }
+	    return (nbrs.size() > old_size);
+	}
+	
+	
+	/**
+	 * Remove a DPoint from the neighbor list for this node.
+	 * This maintains the nbrsUp set also.
+	 * This also updates the neighbor lists of the DPoint passed in.
+	 * 
+	 * Returns true if the DPoint was actually in the neighbor
+	 * set, false otherwise.
+	 * 
+	 * @param p
+	 * @return
+	 */
+	public boolean removeNeighbor(DPoint p) {
+	    nbrsUp.remove(p);
+	    return nbrs.remove(p);
+	}
+
+	
+	/**
+	 * Completely clear out the neighbor set.
+	 * In the process we also remove this DPoint from the neighbor
+	 * list of all of its neighbors.
+	 */
+	public void clearNeighbors() {
+	    for (DPoint p : nbrs) {
+	        p.nbrs.remove(this);
+	        p.nbrsUp.remove(this);
+	    }
+	    nbrsUp.clear();
+	    nbrs.clear();
+	}
+	
 	
 	/**
 	 * Add a vector to the inventory.
@@ -210,6 +266,7 @@ public class DPoint {
 	
 	/**
 	 * This method allocates Mzd objects, so we need to explicitly destroy them.
+	 * This will also clear this DPoint from all of its neighbors.
 	 */
 	public void destroy() {
 	    for (Mzd v : M) {
@@ -218,6 +275,7 @@ public class DPoint {
 	    M.clear();
 	    reducedBasis.destroy();
 	    reducedBasis = null;
+	    this.clearNeighbors();
 	}
 	
 	
