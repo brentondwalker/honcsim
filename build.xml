@@ -5,6 +5,7 @@
   <property name="version" value="0.1"/>
   <property name="buildnumber" value="1"/>
   <property name="junit.output.dir" value="junit"/>
+  <property name="test.home" value="test"/>
   
   <path id="JUnit 4.libraryclasspath">
     <pathelement location="lib/junit.jar"/>
@@ -14,6 +15,12 @@
   <path id="m4rjni.classpath">
     <pathelement location="lib/m4rjni.jar"/>
   </path>
+
+  <path id="javaplex.classpath">
+    <pathelement location="lib/primitive-lib.jar"/>
+    <pathelement location="lib/javaplex-4.1.0.jar"/>
+  </path>
+
 	
   <path id="honcsim.classpath">
     <pathelement location="bin"/>
@@ -69,12 +76,20 @@
       <formatter type="xml"/>
       <classpath>
         <path refid="honcsim.classpath" />
+        <path refid="javaplex.classpath" />      	
         <fileset dir="lib">
           <include name="**/junit.jar" />
           <include name="**/m4rjni.jar" />
         </fileset>
       </classpath>
-      <test name="honcsim.DPointTest" todir="${junit.output.dir}"/>
+      <test name="${test.entry}" todir="${junit.output.dir}" if="test.entry"/>
+      <batchtest todir="${junit.output.dir}" unless="test.entry">
+        <fileset dir="${test.home}">
+          <include name="**/*Test.java"/>
+          <exclude name="**/*AbstractTest.java"/>
+        </fileset>
+      </batchtest>
+    	
       <sysproperty key="java.library.path" value="${java.library.path}:${user.dir}/lib"/>
       <env key="LD_LIBRARY_PATH" path="${env.LD_LIBRARY_PATH}:lib" />
     </junit>

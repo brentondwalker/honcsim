@@ -83,6 +83,11 @@ public class DSimplex {
 	/**
 	 * constructor with a List of DPoint provided
 	 * 
+	 * TODO: ensure that all the vertices added to a simplex consider themselves
+	 *       neighbors of each other
+	 * 
+	 * TODO: fill in the ripsCofaces of any vertex added to a simplex
+	 * 
 	 * @param verts
 	 */
 	public DSimplex(List<DPoint> verts) {
@@ -91,9 +96,9 @@ public class DSimplex {
 			System.exit(0);
 		}
 		vertices = new HashSet<DPoint>(verts);
-
+		
 		if (verts.size()==0) { return; }
-
+		
 		// compute the common neighbors
 		for (DPoint p : vertices) {
 			if (exclusiveNeighbors == null) {
@@ -295,10 +300,14 @@ public class DSimplex {
 	 * This method contains Mzd objects, so we need a way to to clean them up.
 	 */
 	public void destroy() {
-		reducedBasis.destroy();
-		reducedBasis = null;
-		exclusiveReducedBasis.destroy();
-		exclusiveReducedBasis = null;
+	    if (reducedBasis != null) {
+	        reducedBasis.destroy();
+	        reducedBasis = null;
+	    }
+	    if (exclusiveReducedBasis != null) {
+	        exclusiveReducedBasis.destroy();
+	        exclusiveReducedBasis = null;
+	    }
 	}
 
 	
