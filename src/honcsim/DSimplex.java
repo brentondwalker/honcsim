@@ -29,24 +29,22 @@ package honcsim;
  * Let Ui = span(nb(sigma)\X)
  * Then essentially Ui is the vector space that covers sigma without any help from X
  * We'll use Ui to decide how to "drain" vectors from the inventory of X
+ * 
+ * TODO: DSimplex and DPoint do not coordinate well.  For example adding vertices to a DSImplex
+ *       does not check if the DPoint are neighbors of each other.
  */
 
 import java.util.*;
 
 import m4rjni.Mzd;
-import edu.stanford.math.plex4.api.Plex4;
-import edu.stanford.math.plex4.homology.barcodes.*;
-import edu.stanford.math.plex4.homology.chain_basis.*;
-import edu.stanford.math.plex4.homology.interfaces.*;
-import edu.stanford.math.plex4.autogen.homology.*;
-import edu.stanford.math.plex4.streams.impl.*;
-import edu.stanford.math.primitivelib.autogen.formal_sum.*;
-import edu.stanford.math.primitivelib.algebraic.impl.*;
-import edu.stanford.math.plex_viewer.*;
 
 
 public class DSimplex {
 	
+    // the dimension of the vector space
+    // this may be set to 0 if no vertices are added to the simplex
+    int vsDimension = 0;
+    
 	// the vertices of the simplex
 	//public Vector<DPoint> vertices = null;
 	public HashSet<DPoint> vertices;
@@ -95,6 +93,16 @@ public class DSimplex {
 			System.out.println("ERROR: DSimplex constructor called with a null array.");
 			System.exit(0);
 		}
+		
+		// record the dimension of the vector space, and make sure it's the
+		// same for all vertices
+		vsDimension = verts.get(0).vsDimension;
+		for (DPoint v : verts) {
+		    if (v.vsDimension != vsDimension) {
+		        throw(new IllegalArgumentException("dimensions of vector spaces at the vertices are not the same"));
+		    }
+		}
+		
 		vertices = new HashSet<DPoint>(verts);
 		
 		if (verts.size()==0) { return; }
@@ -119,7 +127,7 @@ public class DSimplex {
 		//System.out.println(this);
 	}
 	
-	
+
 	/**
 	 * we want a DSimplex to be uniquely identified by its vertices
 	 */
@@ -146,7 +154,7 @@ public class DSimplex {
 			System.out.println("WARNING: exclusiveBasis() received null or zero.  Returning reducedBasis.");
 			return new Mzd(this.reducedBasis);
 		}
-		Mzd EB = new Mzd(DrainageExperiment.vsDimension,DrainageExperiment.vsDimension);
+		Mzd EB = new Mzd(vsDimension,vsDimension);
 		int ebRank = 0;
 		for (DPoint p : neighbors) {
 			if (! excludedPoints.contains(p)) {
@@ -182,14 +190,20 @@ public class DSimplex {
 	 * but we also want to keep this matrix square.... ah well
 	 */
 	private void computeReducedBasis() {
-		if (reducedBasis != null) {
-			reducedBasis.destroy();
-		}
-		reducedBasis = new Mzd(DrainageExperiment.vsDimension,DrainageExperiment.vsDimension);
-		for (DPoint p : neighbors) {
+        if (reducedBasis != null) {
+            reducedBasis.destroy();
+        }
+	    if (vertices.size() == 0) {
+	        vsDimension = 0;
+	        rank = 0;
+	        reducedBasis = null;
+	        return;
+	    }
+		reducedBasis = new Mzd(vsDimension,vsDimension);
+		for (DPoint p : vertices) {
 			for (Mzd v : p.M) {
 				// only try adding if we aren't already at full rank
-				if (rank<DrainageExperiment.vsDimension) {
+				if (rank < vsDimension) {
 					Mzd.copyRow(reducedBasis, rank, v, 0);
 					rank = reducedBasis.echelonize(false);
 				}
@@ -202,13 +216,19 @@ public class DSimplex {
 	 * (re)build the exclusive reduced basis
 	 */
 	private void computeExclusiveReducedBasis() {
-		if (exclusiveReducedBasis != null) {
-			exclusiveReducedBasis.destroy();
-		}
-		exclusiveReducedBasis = new Mzd(DrainageExperiment.vsDimension,DrainageExperiment.vsDimension);
+        if (exclusiveReducedBasis != null) {
+            exclusiveReducedBasis.destroy();
+        }
+	    if (vertices.size() == 0) {
+            vsDimension = 0;
+	        rank = 0;
+	        reducedBasis = null;
+	        return;
+	    }
+		exclusiveReducedBasis = new Mzd(vsDimension,vsDimension);
 		for (DPoint p : exclusiveNeighbors) {
 			for (Mzd v : p.M) {
-				if (exclusiveRank<DrainageExperiment.vsDimension) {
+				if (exclusiveRank < vsDimension) {
 					Mzd.copyRow(exclusiveReducedBasis, exclusiveRank, v, 0);
 					exclusiveRank = exclusiveReducedBasis.echelonize(false);
 				}
@@ -225,14 +245,31 @@ public class DSimplex {
 	 */
 	public void addVertices(List<DPoint> verts) {
 		if (verts==null) { return; }
+		if (vertices.size() == 0) {
+		    vsDimension = verts.get(0).vsDimension;
+		}
+		for (DPoint p : verts) {
+		    if (p.vsDimension != vsDimension) {
+                throw(new IllegalArgumentException("dimensions of vector spaces at the vertices are not the same"));
+            }
+		}
+		
+		// in case we are starting from an empty simplex
+		if (vertices.size() == 0) {
+		    exclusiveNeighbors.addAll(verts.get(0).nbrs);
+		    neighbors.addAll(exclusiveNeighbors);
+		}
+		
+		// compute the intersection of all the neighbor sets
+		// effectively finds the maximal coface of the simplex
 		for (DPoint p : verts) {
 			vertices.add(p);
 			exclusiveNeighbors.retainAll(p.nbrs);
 			neighbors.retainAll(p.nbrs);
-			neighbors.add(p);
 		}
+		neighbors.addAll(verts);
 		
-		// recompute the reduced basisessesses
+		// recompute the reduced bases
 		computeReducedBasis();
 		computeExclusiveReducedBasis();
 	}
@@ -255,32 +292,43 @@ public class DSimplex {
 	/**
 	 * Remove some vertices from the DSimplex.
 	 * Requires re-computing the common neighbors from scratch.
+	 * When we remove vertices from a simplex, unless it removes all
+	 * vertices, it actually increases the neighbor set.
 	 * 
 	 * @param verts
 	 */
 	public void delVertices(List<DPoint> verts) {
 		vertices.removeAll(verts);
-		exclusiveNeighbors = null;
-
-		// re-compute the common neighbors
-		for (DPoint p : vertices) {
-			if (exclusiveNeighbors == null) {
-				exclusiveNeighbors = new HashSet<DPoint>(p.nbrs);
-			} else {
-				exclusiveNeighbors.retainAll(p.nbrs);
-				if (exclusiveNeighbors.size()==0) { break; }
-			}
+		
+		if (vertices.size() == 0) {
+		    if (reducedBasis != null) { reducedBasis.destroy(); }
+		    if (exclusiveReducedBasis != null) { exclusiveReducedBasis.destroy(); }
+            reducedBasis = null;
+		    exclusiveReducedBasis = null;
+		    vsDimension = 0;
+		    neighbors.clear();
+		    exclusiveNeighbors.clear();
+		    return;
 		}
-		neighbors = new HashSet<DPoint>(exclusiveNeighbors);
+
+        // re-compute the common neighbors, inclusive and exclusive
+		exclusiveNeighbors.clear();
+		neighbors.clear();
+		exclusiveNeighbors.addAll(vertices.iterator().next().nbrs);
+		for (DPoint p : vertices) {
+		    exclusiveNeighbors.retainAll(p.nbrs);
+		    if (exclusiveNeighbors.size()==0) { break; }
+		}
+		neighbors.addAll(exclusiveNeighbors);
 		for (DPoint p : vertices) {
 			neighbors.add(p);
 		}
-
-		// recompute the reduced basisessesses
+		
+		// recompute the reduced bases
 		computeReducedBasis();
 		computeExclusiveReducedBasis();
 	}
-
+	
 	
 	/**
 	 * Remove a vertex from the DSimplex.
@@ -308,6 +356,10 @@ public class DSimplex {
 	        exclusiveReducedBasis.destroy();
 	        exclusiveReducedBasis = null;
 	    }
+	    neighbors.clear();
+	    exclusiveNeighbors.clear();
+	    vsDimension = 0;
+	    rank = 0;
 	}
 
 	
