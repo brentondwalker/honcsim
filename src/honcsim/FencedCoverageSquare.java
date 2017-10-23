@@ -70,8 +70,18 @@ public class FencedCoverageSquare extends CoverageExperiment {
 		// so we compute the neighbor set in the constructor
 		this.computeNeighborSet();
 		
+		// build the Rips complex
+		// In our case the rips complex is a javaplex object, and javaplex uses streams
+		this.buildRipsComplex();
+		System.out.println("Built Rips complex with "+ripsComplexStream.getSize()+" faces");
 		
-		
+		// build the filtered RC-->R complex
+		this.buildCoverageRipsComplex(V);
+		System.out.println("Built filtered coverage-->Rips complex with "+coverageRipsComplexStream.getSize()+" faces");
+
+		// build the coverage complex
+		this.buildCoverageComplex(V);
+		System.out.println("Built coverage complex with "+coverageComplexStream.getSize()+" faces");
 	}
 	
 	
@@ -153,12 +163,12 @@ public class FencedCoverageSquare extends CoverageExperiment {
 		
 		FencedCoverageSquare g = new FencedCoverageSquare(gridWidth, gridHeight, gridSpacing, vsDim, numPoints,  inventorySize);
 
-		g.buildRipsComplex();
-		g.buildCoverageComplex(g.V, true);
-		g.buildCoverageRipsComplex(g.V, true);		
-	    //g.computeHomology();
+		//g.buildRipsComplex();
+		//g.buildCoverageComplex(g.V, true);
+		//g.buildCoverageRipsComplex(g.V, true);		
+		//g.computeHomology();
 		g.computePersistentHomology();
-	    g.drawComplex();
+		g.drawComplex();
 	}
 	
 }

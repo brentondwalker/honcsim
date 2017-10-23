@@ -30,7 +30,7 @@ package honcsim;
  * Then essentially Ui is the vector space that covers sigma without any help from X
  * We'll use Ui to decide how to "drain" vectors from the inventory of X
  * 
- * TODO: DSimplex and DPoint do not coordinate well.  For example adding vertices to a DSImplex
+ * TODO: DSimplex and DPoint do not coordinate well.  For example adding vertices to a DSimplex
  *       does not check if the DPoint are neighbors of each other.
  */
 
