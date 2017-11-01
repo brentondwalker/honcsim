@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
 <project name="honcsim" default="jar" basedir=".">
 
@@ -30,6 +30,9 @@
   			<pathelement path="lib/javaplex-4.1.0.jar"/>
 			<pathelement path="lib/primitive-lib.jar"/>
   			<pathelement path="lib/plex-viewer-1.0.0.jar"/>
+			<pathelement path="lib/jfreechart.jar"/>
+			<pathelement path="lib/jcommon-xml-1.0.23.jar"/>
+                  <pathelement path="lib/jfreechart-1.0.19-demo.jar"/>
   		</classpath>
   	</javac>
   </target>

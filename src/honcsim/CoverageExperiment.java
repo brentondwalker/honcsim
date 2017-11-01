@@ -26,7 +26,10 @@ package honcsim;
 
 import java.util.*;
 
+
+
 import m4rjni.Mzd;
+import sun.security.util.Length;
 import edu.stanford.math.plex4.api.Plex4;
 import edu.stanford.math.plex4.homology.barcodes.*;
 import edu.stanford.math.plex4.homology.chain_basis.*;
@@ -40,7 +43,11 @@ import edu.stanford.math.plex_viewer.*;
 
 
 public class CoverageExperiment {
+	public static int holes=0;
+	public static int iterations=0;
 
+	
+	
     /*
      * class data
      */
@@ -642,8 +649,9 @@ public class CoverageExperiment {
         
         
         annotated_intervals = persistence.computeAnnotatedIntervals(stream);
-        System.out.println("\nAnnotated barcodes for stream: ");
-        System.out.println(annotated_intervals);
+      //  System.out.println("\nAnnotated barcodes for stream: ");
+      //  System.out.println(annotated_intervals);
+        
     	
     }
     public void CoverageStream(){
@@ -661,8 +669,8 @@ public class CoverageExperiment {
         
         
         annotated_intervals = persistence.computeAnnotatedIntervals(stream);
-        System.out.println("\nAnnotated barcodes for stream: ");
-        System.out.println(annotated_intervals);
+      //  System.out.println("\nAnnotated barcodes for stream: ");
+      //  System.out.println(annotated_intervals);
     	
     }
     
@@ -674,12 +682,13 @@ public class CoverageExperiment {
         stream.finalizeStream();
 
         AbstractPersistenceBasisAlgorithm<Simplex,IntSparseFormalSum<Simplex>> persistence = new IntAbsoluteHomology<Simplex>(ModularIntField.getInstance(2), SimplexComparator.getInstance(), 1, 2);
-        System.out.println("Got persistence object...");
+       //System.out.println("Got persistence object...");
 
         // compute and print the intervals
         BarcodeCollection<Double> intervals = persistence.computeIntervals(stream);
-        System.out.println("\nBarcodes for stream: ");
-        System.out.println(intervals);
+      //  System.out.println("\nBarcodes for stream: ");
+       // System.out.println(intervals);
+        
         
         // compute and print the intervals annotated with a representative cycle
         //AnnotatedBarcodeCollection<Integer,IntSparseFormalSum<Simplex>> circle_intervals2 = persistence.   .computeAnnotatedIntervals(stream);
@@ -687,12 +696,12 @@ public class CoverageExperiment {
         //AnnotatedBarcodeCollection<Integer, IntSparseFormalSum<Simplex>> 
         AnnotatedBarcodeCollection<Double, IntSparseFormalSum<Simplex>> annotated_intervals;
         annotated_intervals = persistence.computeAnnotatedIntervals(stream);
-        System.out.println("\nAnnotated barcodes for stream: ");
-        System.out.println(annotated_intervals);
+      //  System.out.println("\nAnnotated barcodes for stream: ");
+      //  System.out.println(annotated_intervals);
   
         AnnotatedBarcodeCollection<Double, IntSparseFormalSum<Simplex>> infinite_intervals = annotated_intervals.getInfiniteIntervals();
-        System.out.println("\nJust the infinite intervals for stream: ");
-        System.out.println(infinite_intervals);
+    //    System.out.println("\nJust the infinite intervals for stream: ");
+     //   System.out.println(infinite_intervals);
 
         //List<IntSparseFormalSum<Simplex>> oneCycles = infinite_intervals.getGeneratorsAtDimension(1);
         //List<IntSparseFormalSum<Simplex>> oneCycles = annotated_intervals.getGeneratorsAtDimension(1);
@@ -720,9 +729,11 @@ public class CoverageExperiment {
         ExplicitSimplexStream strInf = new ExplicitSimplexStream();
         ExplicitSimplexStream strFin = new ExplicitSimplexStream();
         if (oneCycles != null) {
+        	
+        	int count=0;
             for (ObjectObjectPair<Interval<Double>, IntSparseFormalSum<Simplex>> c : oneCycles) {
-                //System.out.println(c);
-
+               // System.out.println(c);
+                count++;
                 if (c.getFirst().isInfinite()) {
                     for (Simplex ss : c.getSecond().getSummands()) {
                         //System.out.println(ss);
@@ -735,6 +746,7 @@ public class CoverageExperiment {
                     }
                 }
             }
+            holes=count;    
         }
 
         //return cycleStreams;
@@ -748,13 +760,12 @@ public class CoverageExperiment {
     	HashSet<DPoint> vertices = new HashSet<DPoint>();
     	DPoint uncovered_vertix=null ;
     	int mostuncovered=0;
+    	
     	for (DPoint p : points) {
         	int total_cofaces = 0;
         	int covered_cofaces = 0;
 
         	for (DSimplex sigma : p.ripsCofaces) {
-    		//	System.out.println(p + " >  " +p.ripsCofaces);
-        	//	System.out.println(p + " >  " +sigma);
     			total_cofaces++;
     			int [] verts = new int[sigma.vertices.size()];
     			int i = 0;
@@ -762,19 +773,13 @@ public class CoverageExperiment {
     				verts[i++] = pp.index;
     			}
     			if(coverageComplexStream.containsElement(new Simplex(verts))){
-				//	System.out.println("in coverage");
 					covered_cofaces++;
-    			} else {
+    			}
+    			else {
     				sigma.computeReducedBasis();
-    				System.out.println("  point: "+p.index+"\tuncovered simplex: "+sigma+"\trank "+sigma.rank);
-    			//	System.out.println("no coverage");
-    			//	System.out.println(sigma.vertices.size());
     			}
         	}
         	if(covered_cofaces!=total_cofaces){
-        	//	System.out.println("covered cofaces  "+covered_cofaces);
-            //	System.out.println("total cofaces  "+total_cofaces);
-            //	System.out.println("----------");
             	int uncovered=total_cofaces-covered_cofaces;
             	if(uncovered>mostuncovered){
             		mostuncovered=uncovered;
@@ -782,34 +787,100 @@ public class CoverageExperiment {
             	}
         	}
     	}
-    	System.out.println("uncovered cofaces "+mostuncovered);
+    	// System.out.println("uncovered cofaces "+mostuncovered);
     	 return uncovered_vertix;
 	}
+    public  ArrayList<DPoint> computeCoveredCofacesArray() {
+    	// TODO Auto-generated method stub
+    	
+    	DSimplex dSimplex = new DSimplex();
+    	ArrayList<DPoint> ucovered = new ArrayList<DPoint>();
+    	DPoint uncovered_vertix=null ;
+    	int mostuncovered=0;
+    	
+    	for (DPoint p : points) {
+    		int total_cofaces = 0;
+    		int covered_cofaces = 0;
+
+    		for (DSimplex sigma : p.ripsCofaces) {
+				total_cofaces++;
+				int [] verts = new int[sigma.vertices.size()];
+				int i = 0;
+				for (DPoint pp : sigma.vertices) {
+					verts[i++] = pp.index;
+				}
+    			if(coverageComplexStream.containsElement(new Simplex(verts))){
+    				covered_cofaces++;
+    			}
+    			else {
+    				sigma.computeReducedBasis();
+    			}
+    		}
+    		if(covered_cofaces!=total_cofaces){
+    	
+    			int uncovered=total_cofaces-covered_cofaces;
+    				mostuncovered=uncovered;
+    				uncovered_vertix=p;
+    				ucovered.add(p);
+    				dSimplex.addVertices(ucovered);
+    		}
+    	}
+    	return ucovered;
+	}
+    public void optimizeDistribution(){
+    	int total_vectors_added = 0;
+    	ArrayList<DPoint> uncovered_vertices = computeCoveredCofacesArray();
+    	System.out.println("initially unvovered vertices: "+uncovered_vertices.size());
+    	if(uncovered_vertices!=null){
+    		while(uncovered_vertices.size() > 0){ 				// Iteration until whole complex not filled with data 
+    			ArrayList<DPoint> uncovered_vertix=computeCoveredCofacesArray();
+    			//System.out.println(uncovered_vertix.size());
+    			uncovered_vertices=uncovered_vertix;
+   
+    			for (DPoint p : uncovered_vertix) {
+    				
+    				p.addRandomInventoryVector();
+    				total_vectors_added++;
+    				System.out.println("vertex no "+p.index);
+ 
+    			}
+    			//adding data
+    			//System.out.println("vertex no "+uncovered_vertices.index+"iteration_count"+iteration_count);  // debuging line 
+    			
+    			buildCoverageComplex(V);      			// recomputing coverage complex 
+    			buildCoverageRipsComplex(V);			
+    		}		 
+    	}
+    	iterations=total_vectors_added;
+    	System.out.println("total_vectors_added: "+total_vectors_added);
+    }
     // reComputeCoverageComplex=> recomputing the coverage complex, adding vertices to fill the complex 
     public void reComputeCoverageComplex(){
-    	drawComplex();
+    	System.out.println("In the coverage complex"); 
+    //	drawComplex();
     	int iteration_count=0;
     	DPoint uncovered_vertices=computeCoveredCofaces();
-    	if(uncovered_vertices!=null){
+    	if(uncovered_vertices!=null){ 
     		while(uncovered_vertices!=null){ 				// Iteration until whole complex not filled with data 
     			DPoint uncovered_vertix=computeCoveredCofaces();
     			if(uncovered_vertix!=null){
     				uncovered_vertix.addRandomInventoryVector();  // adding data
-    				System.out.println("vertex no "+uncovered_vertix.index);
+    				System.out.println("vertex no "+uncovered_vertix.index+"iteration_count"+iteration_count);  // debuging line 
     				iteration_count++;
     			}
-    			buildCoverageComplex(V);      			// recomputing coverage complex 
-    			buildCoverageRipsComplex(V);
+    			buildCoverageComplex(V,true);      			// recomputing coverage complex 
+    			buildCoverageRipsComplex(V,true);
     			if(uncovered_vertix!=null){
-    				drawComplex();
+    			//	drawComplex();
     			}
     			uncovered_vertices=uncovered_vertix;				
     		}
-    		System.out.println("Total number of Iterations "+(iteration_count)); 
+    		iterations=iteration_count;
+    		 System.out.println("Total number of Iterations to fill the holes "+(iteration_count)); 
     	}else{
-    		drawComplex();
+    		//drawComplex();
     	}
-    }
+    }   
     /**
      * Compute the homology of the coverage complex
      * 
@@ -872,12 +943,13 @@ public class CoverageExperiment {
      */
     public void drawComplex() {
         //System.out.println("drawComplex()");
+    	/*
         System.out.println("page-up / page-down to zoom");
         System.out.println("arrows rotate");
         System.out.println("1 - show/hide Rips complex");
         System.out.println("2 - show/hide coverage complex");
         System.out.println("3 - show/hide homology generators");
-
+*/
         // first put the points location data into an array of double
         domainPoints = new double[points.size()][];
         double xMean = 0.0;
@@ -898,8 +970,8 @@ public class CoverageExperiment {
             domainPoints[i][0] -= xMean;
             domainPoints[i][1] -= yMean;
         }
-        System.out.println("1 - show/hide Rips complex");
-        System.out.println(domainPoints);
+    //    System.out.println("1 - show/hide Rips complex");
+    //    System.out.println(domainPoints);
         // pass it to the plex-viewer API along with the stream
         //Api.drawSimplexStream(ripsComplexStream, domainPoints);
         //Api.drawSimplexStream(ss, domainPoints);

@@ -152,13 +152,14 @@ public class FencedCoverageSquare extends CoverageExperiment {
 		int inventorySize = Integer.parseInt(args[5]);
 		
 		FencedCoverageSquare g = new FencedCoverageSquare(gridWidth, gridHeight, gridSpacing, vsDim, numPoints,  inventorySize);
-
-		g.buildRipsComplex();
-		g.buildCoverageComplex(g.V, true);
-		g.buildCoverageRipsComplex(g.V, true);		
+		
+		g.reComputeCoverageComplex();
+		//g.buildRipsComplex();
+		//g.buildCoverageComplex(g.V, true);
+		//g.buildCoverageRipsComplex(g.V, true);		
 	    //g.computeHomology();
-		g.computePersistentHomology();
-	    g.drawComplex();
+		//g.computePersistentHomology();
+		//g.drawComplex();
 	}
 	
 }

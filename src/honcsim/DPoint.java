@@ -105,7 +105,7 @@ public class DPoint {
 		//System.out.println("reducedBasis:");
 		//reducedBasis.print();
 		M.add(new Mzd(v));
-		System.out.println("  point "+this.index+"\tM.size = "+M.size());
+		//  System.out.println("  point "+this.index+"\tM.size = "+M.size());  // debugging   size and point
 		
 		// update the reduced basis matrix
 		int oldrank = rank;
@@ -113,7 +113,7 @@ public class DPoint {
 			Mzd.copyRow(reducedBasis, rank, v, 0);
 			rank = reducedBasis.echelonize(false);
 		}
-		System.out.println("  point "+this.index+"\tM.rank = "+rank);
+	//	System.out.println("  point "+this.index+"\tM.rank = "+rank);  // debugging 
 		//System.out.println("new rank="+rank);
 		//System.out.println("reducedBasis:");
 		//reducedBasis.print();
