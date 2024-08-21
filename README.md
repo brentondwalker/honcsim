@@ -21,4 +21,5 @@ where example-name is one of the example classes:
 * LayeredLoop
 * LayeredSimplex
 * CoverageGrid
+* FencedCoverageSquare
 
